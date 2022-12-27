@@ -7,7 +7,7 @@ using ULTRAKIT.Extensions;
 using UnityEngine.Events;
 using UnityEngine;
 
-namespace Boreal
+namespace BorealEditor
 {
     public class LevelLoader : MonoBehaviour
     {
@@ -73,10 +73,33 @@ namespace Boreal
     public class Trigger : MonoBehaviour
     {
         public UnityEvent FunctionToCall;
+        private bool _active;
 
-        private void OnTriggerEnter()
+        private void OnTriggerEnter(Collider other)
         {
-            FunctionToCall.Invoke();
+            if (!_active && other.tag == "Player")
+            {
+                _active = true;
+                FunctionToCall.Invoke();
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (_active && other.tag == "Player")
+            {
+                _active = false;
+            }
+        }
+    }
+
+    public class RenderFixer : MonoBehaviour
+    {
+        public string LayerName;
+
+        public void Start()
+        {
+            PeterExtensions.RenderObject(gameObject, LayerMask.NameToLayer(LayerName));
         }
     }
 }

@@ -8,7 +8,7 @@ using ULTRAKIT.Data;
 using UnityEditor;
 using UnityEngine;
 
-namespace Boreal
+namespace BorealEditor
 {
     [CustomEditor(typeof(SceneBundleData))]
     public class SceneBundleEditor : Editor

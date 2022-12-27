@@ -5,6 +5,8 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boreal", "Boreal\Boreal.csproj", "{A7734254-B583-42D3-A7AE-FB809B30A306}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BorealEditor", "BorealEditor\BorealEditor.csproj", "{C844B648-1B2C-4A14-A744-457F5BB289D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A7734254-B583-42D3-A7AE-FB809B30A306}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7734254-B583-42D3-A7AE-FB809B30A306}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7734254-B583-42D3-A7AE-FB809B30A306}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C844B648-1B2C-4A14-A744-457F5BB289D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C844B648-1B2C-4A14-A744-457F5BB289D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C844B648-1B2C-4A14-A744-457F5BB289D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C844B648-1B2C-4A14-A744-457F5BB289D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

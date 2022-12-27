@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A7734254-B583-42D3-A7AE-FB809B30A306}</ProjectGuid>
+    <ProjectGuid>{C844B648-1B2C-4A14-A744-457F5BB289D7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Boreal</RootNamespace>
-    <AssemblyName>Boreal</AssemblyName>
+    <RootNamespace>BorealEditor</RootNamespace>
+    <AssemblyName>BorealEditor</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -119,15 +119,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main.cs" />
-    <Compile Include="Patches.cs" />
+    <Compile Include="SceneBundleData.cs" />
+    <Compile Include="SceneBundleEditor.cs" />
+    <Compile Include="SOMenuInjector.cs" />
+    <Compile Include="LoaderClasses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BorealEditor\BorealEditor.csproj">
-      <Project>{c844b648-1b2c-4a14-a744-457f5bb289d7}</Project>
-      <Name>BorealEditor</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

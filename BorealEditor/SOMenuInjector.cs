@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
-namespace Boreal
+namespace BorealEditor
 {
     public class SOMenuInjector
     {
-        [MenuItem("Assets/ULTRAKIT/SceneExporter")]
+        [MenuItem("Assets/Boreal/SceneExporter")]
         public static void NewSceneBundleData()
         {
             CreateObject<SceneBundleData>("SceneExporter");

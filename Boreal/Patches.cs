@@ -14,7 +14,7 @@ namespace Boreal
         [HarmonyPrefix]
         public static void AwakePrefix(StatsManager __instance)
         {
-            if (__instance.levelNumber < 0)
+            if (MapLoader.Instance.isCustomLoaded)
                 __instance.secretObjects = new UnityEngine.GameObject[0];
         }
     }
