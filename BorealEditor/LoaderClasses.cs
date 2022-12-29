@@ -6,34 +6,93 @@ using System.Threading.Tasks;
 using ULTRAKIT.Extensions;
 using UnityEngine.Events;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace BorealEditor
 {
-    public class LevelLoader : MonoBehaviour
+    // Initializers
+
+    [ConfigureSingleton(SingletonFlags.DestroyDuplicates)]
+    public class LevelLoader : MonoSingleton<LevelLoader>
     {
+        public string LayerName;
+        public string LevelName;
+
+        public int[] TimeRanks = new int[4];
+        public int[] KillRanks = new int[4];
+        public int[] StyleRanks = new int[4];
+
+        [HideInInspector]
         public static SpawnableObjectsDatabase database;
-        public void Awake()
+        [HideInInspector]
+        public GameObject FirstRoom;
+        
+        public void OnValidate()
         {
+            if (TimeRanks.Length != 4)
+                Array.Resize(ref TimeRanks, 4);
+            if (KillRanks.Length != 4)
+                Array.Resize(ref KillRanks, 4);
+            if (StyleRanks.Length != 4)
+                Array.Resize(ref StyleRanks, 4);
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
             Debug.Log("Loading custom level");
-            GameObject room = Instantiate(DazeExtensions.PrefabFind(null, "common", "firstroom"));
+            FirstRoom = Instantiate(DazeExtensions.PrefabFind(null, "common", "firstroom"), transform.position, Quaternion.identity, transform);
             MapLoader.Instance.isCustomLoaded = true;
-            GameObject stats = Instantiate(DazeExtensions.PrefabFind(null, "common", "statsmanager"));
+            MapLoader.Instance.currentCustomId = "com.boreal." + SceneManager.GetActiveScene().name;
+            Instantiate(DazeExtensions.PrefabFind(null, "common", "statsmanager"));
 
-            StatsManager s = StatsManager.Instance;
-            s.levelNumber = -1;
+            StatsManager.Instance.levelNumber = -1;
+            StatsManager.Instance.timeRanks = TimeRanks;
+            StatsManager.Instance.killRanks = KillRanks;
+            StatsManager.Instance.styleRanks = StyleRanks;
 
-            LevelNamePopup.Instance.SetPrivate("layerString", "U-1");
-            LevelNamePopup.Instance.SetPrivate("nameString", "Not a copy of the debug room");
+            LevelNamePopup.Instance.SetPrivate("layerString", LayerName);
+            LevelNamePopup.Instance.SetPrivate("nameString", LevelName);
 
-            CanvasController.Instance.gameObject.GetComponentInChildren<SpawnMenu>(true).gameObject.SetActive(true);
+            CanvasController.Instance.GetComponentInChildren<SpawnMenu>(true).gameObject.SetActive(true);
             database = SpawnMenu.Instance.GetPrivate<SpawnableObjectsDatabase>("objects");
         }
 
         public void Start()
         {
-            CanvasController.Instance.gameObject.GetComponentInChildren<SpawnMenu>().gameObject.SetActive(false);
+            CanvasController.Instance.GetComponentInChildren<SpawnMenu>().gameObject.SetActive(false);
         }
     }
+
+    [ConfigureSingleton(SingletonFlags.DestroyDuplicates)]
+    public class CreateEndZone : MonoSingleton<CreateEndZone>
+    {
+        [HideInInspector]
+        public GameObject FinalRoom;
+        [HideInInspector]
+        public FinalDoor FinalDoor;
+
+        protected void Start()
+        {
+            Debug.Log("Loading final pit");
+            FinalRoom = Instantiate(DazeExtensions.PrefabFind(null, "common", "FinalRoom 1"), transform.position - new Vector3(0f, 10f, 0f), Quaternion.identity, transform);
+            FinalDoor = FinalRoom.GetComponentInChildren<FinalDoor>();
+            CameraController.Instance.GetComponentInChildren<LevelNameFinder>(true).textBeforeName = $"{LevelLoader.Instance.LayerName}: {LevelLoader.Instance.LevelName}";
+        }
+
+        public void OpenDoor()
+        {
+            FinalDoor.Open();
+        }
+
+        public void CloseDoor()
+        {
+            FinalDoor.Close();
+        }
+    }
+
+    // Components
 
     public class Tagger : MonoBehaviour
     {
