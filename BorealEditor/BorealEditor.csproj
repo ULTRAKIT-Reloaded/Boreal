@@ -119,11 +119,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Challenges.cs" />
+    <Compile Include="Components.cs" />
     <Compile Include="SceneBundleData.cs" />
     <Compile Include="SceneBundleEditor.cs" />
     <Compile Include="SOMenuInjector.cs" />
     <Compile Include="LoaderClasses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SupportClasses.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

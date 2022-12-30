@@ -8,13 +8,12 @@ using UnityEngine.Events;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using BorealEditor.Components;
 
-namespace BorealEditor
+namespace BorealEditor.Initializers
 {
-    // Initializers
-
-    [ConfigureSingleton(SingletonFlags.DestroyDuplicates)]
-    public class LevelLoader : MonoSingleton<LevelLoader>
+    [ConfigureSingleton(SingletonFlags.NoAutoInstance)]
+    public class BorealManager : MonoSingleton<BorealManager>
     {
         public string LayerName;
         public string LevelName;
@@ -23,11 +22,12 @@ namespace BorealEditor
         public int[] KillRanks = new int[4];
         public int[] StyleRanks = new int[4];
 
+        public GameObject[] Secrets = new GameObject[0];
+        public string ChallengeDescription;
+
         [HideInInspector]
-        public static SpawnableObjectsDatabase database;
-        [HideInInspector]
-        public GameObject FirstRoom;
-        
+        public SpawnableObjectsDatabase database;
+       
         public void OnValidate()
         {
             if (TimeRanks.Length != 4)
@@ -36,7 +36,16 @@ namespace BorealEditor
                 Array.Resize(ref KillRanks, 4);
             if (StyleRanks.Length != 4)
                 Array.Resize(ref StyleRanks, 4);
+            if (Secrets.Length > 5)
+                Array.Resize(ref Secrets, 5);
         }
+    }
+
+    [ConfigureSingleton(SingletonFlags.NoAutoInstance)]
+    public class LevelLoader : MonoSingleton<LevelLoader>
+    {
+        [HideInInspector]
+        public GameObject FirstRoom;
 
         protected override void Awake()
         {
@@ -48,15 +57,15 @@ namespace BorealEditor
             Instantiate(DazeExtensions.PrefabFind(null, "common", "statsmanager"));
 
             StatsManager.Instance.levelNumber = -1;
-            StatsManager.Instance.timeRanks = TimeRanks;
-            StatsManager.Instance.killRanks = KillRanks;
-            StatsManager.Instance.styleRanks = StyleRanks;
+            StatsManager.Instance.timeRanks = BorealManager.Instance.TimeRanks;
+            StatsManager.Instance.killRanks = BorealManager.Instance.KillRanks;
+            StatsManager.Instance.styleRanks = BorealManager.Instance.StyleRanks;
 
-            LevelNamePopup.Instance.SetPrivate("layerString", LayerName);
-            LevelNamePopup.Instance.SetPrivate("nameString", LevelName);
+            LevelNamePopup.Instance.SetPrivate("layerString", BorealManager.Instance.LayerName);
+            LevelNamePopup.Instance.SetPrivate("nameString", BorealManager.Instance.LevelName);
 
             CanvasController.Instance.GetComponentInChildren<SpawnMenu>(true).gameObject.SetActive(true);
-            database = SpawnMenu.Instance.GetPrivate<SpawnableObjectsDatabase>("objects");
+            BorealManager.Instance.database = SpawnMenu.Instance.GetPrivate<SpawnableObjectsDatabase>("objects");
         }
 
         public void Start()
@@ -65,100 +74,32 @@ namespace BorealEditor
         }
     }
 
-    [ConfigureSingleton(SingletonFlags.DestroyDuplicates)]
-    public class CreateEndZone : MonoSingleton<CreateEndZone>
+    [ConfigureSingleton(SingletonFlags.NoAutoInstance)]
+    public class EndZone : MonoSingleton<EndZone>
     {
         [HideInInspector]
         public GameObject FinalRoom;
         [HideInInspector]
         public FinalDoor FinalDoor;
 
-        protected void Start()
+        private void Start()
         {
             Debug.Log("Loading final pit");
             FinalRoom = Instantiate(DazeExtensions.PrefabFind(null, "common", "FinalRoom 1"), transform.position - new Vector3(0f, 10f, 0f), Quaternion.identity, transform);
             FinalDoor = FinalRoom.GetComponentInChildren<FinalDoor>();
-            CameraController.Instance.GetComponentInChildren<LevelNameFinder>(true).textBeforeName = $"{LevelLoader.Instance.LayerName}: {LevelLoader.Instance.LevelName}";
+            CameraController.Instance.GetComponentInChildren<LevelNameFinder>(true).textBeforeName = $"{BorealManager.Instance.LayerName}: {BorealManager.Instance.LevelName}";
+            FinalRank.Instance.transform.Find("Challenge/Text").GetComponent<Text>().text = BorealManager.Instance.ChallengeDescription.ToUpper();
         }
 
         public void OpenDoor()
         {
+            StatsManager.Instance.StopTimer();
             FinalDoor.Open();
         }
 
         public void CloseDoor()
         {
             FinalDoor.Close();
-        }
-    }
-
-    // Components
-
-    public class Tagger : MonoBehaviour
-    {
-        [SerializeField]
-        private string tagstring;
-
-        public void Awake()
-        {
-            gameObject.tag = tagstring;
-        }
-    }
-
-    public class EnemySpawner : MonoBehaviour
-    {
-        public EnemyType _EnemyType;
-        public string _commonOverride = string.Empty;
-        private GameObject prefab;
-
-        private void Start()
-        {
-            if (_commonOverride != string.Empty && _commonOverride.Length > 0)
-            {
-                prefab = DazeExtensions.PrefabFind(null, "common", _commonOverride);
-            }
-            else
-            {
-                prefab = LevelLoader.database.enemies.Where(e => e.enemyType == _EnemyType).First().gameObject;
-            }
-        }
-
-        public void Spawn()
-        {
-            Instantiate(prefab, transform.position, Quaternion.identity);
-        }
-    }
-
-    public class Trigger : MonoBehaviour
-    {
-        public UnityEvent FunctionToCall;
-        private bool _active;
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (!_active && other.tag == "Player")
-            {
-                _active = true;
-                FunctionToCall.Invoke();
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (_active && other.tag == "Player")
-            {
-                _active = false;
-            }
-        }
-    }
-
-    public class RenderFixer : MonoBehaviour
-    {
-        public string LayerName;
-
-        public void Start()
-        {
-            PeterExtensions.RenderObject(gameObject, LayerMask.NameToLayer(LayerName));
         }
     }
 }
