@@ -114,4 +114,69 @@ namespace BorealEditor.Components
             PeterExtensions.RenderObject(gameObject, LayerMask.NameToLayer(LayerName));
         }
     }
+
+    public class DefaultBonus : MonoBehaviour
+    {
+        public BonusType type;
+        public int secretNumber;
+
+        private void Awake()
+        {
+            if (type == BonusType.Default)
+            {
+                Bonus bonus = Instantiate(BorealManager.Instance._bonus, transform.position, transform.rotation, transform).GetComponent<Bonus>();
+                bonus.secretNumber = secretNumber;
+            }
+            if (type == BonusType.Supercharge)
+            {
+                Bonus bonus = Instantiate(BorealManager.Instance._bonusSupercharge, transform.position, transform.rotation, transform).GetComponent<Bonus>();
+                bonus.secretNumber = secretNumber;
+            }
+            if (type == BonusType.DualWield)
+            {
+                Bonus bonus = Instantiate(BorealManager.Instance._bonusDualWield, transform.position, transform.rotation, transform).GetComponent<Bonus>();
+                bonus.secretNumber = secretNumber;
+            }
+        }
+    }
+
+    public class BorealBonus : MonoBehaviour
+    {
+        public BonusType type;
+        public int secretNumber;
+        public bool dontReplaceWithGhost;
+
+        public GameObject ghostVersion;
+        public GameObject breakEffect;
+        public GameObject ghostBreakEffect;
+
+        private void Awake()
+        {
+            Bonus bonus = gameObject.AddComponent<Bonus>();
+            bonus.dontReplaceWithGhost = dontReplaceWithGhost;
+            switch (type)
+            {
+                case BonusType.Supercharge: bonus.superCharge = true; break;
+                case BonusType.DualWield: gameObject.AddComponent<DualWieldPickup>(); break;
+            }
+            if (!bonus.ghost || bonus.dontReplaceWithGhost)
+            {
+                bonus.breakEffect = breakEffect;
+            }
+            if (bonus.ghost && !bonus.dontReplaceWithGhost)
+            {
+                Bonus obj = Instantiate(ghostVersion, transform.position, transform.rotation).AddComponent<Bonus>();
+                bonus.ghost = true;
+                switch (type)
+                {
+                    case BonusType.Supercharge: obj.superCharge = true; break;
+                    case BonusType.DualWield: obj.gameObject.AddComponent<DualWieldPickup>(); break;
+                }
+                obj.breakEffect = ghostBreakEffect;
+
+                gameObject.SetActive(false);
+                Destroy(gameObject);
+            }
+        }
+    }
 }

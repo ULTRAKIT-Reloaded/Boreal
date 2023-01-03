@@ -27,7 +27,22 @@ namespace BorealEditor.Initializers
 
         [HideInInspector]
         public SpawnableObjectsDatabase database;
-       
+
+        [HideInInspector]
+        public GameObject _bonus;
+        [HideInInspector]
+        public GameObject _bonusGhost;
+        [HideInInspector]
+        public GameObject _bonusParticle;
+        [HideInInspector]
+        public GameObject _bonusParticleGhost;
+        [HideInInspector]
+        public GameObject _bonusSupercharge;
+        [HideInInspector]
+        public GameObject _bonusGhostSupercharge;   
+        [HideInInspector]
+        public GameObject _bonusDualWield;
+
         public void OnValidate()
         {
             if (TimeRanks.Length != 4)
@@ -38,6 +53,18 @@ namespace BorealEditor.Initializers
                 Array.Resize(ref StyleRanks, 4);
             if (Secrets.Length > 5)
                 Array.Resize(ref Secrets, 5);
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+            _bonus = DazeExtensions.PrefabFind(null, "common", "Bonus");
+            _bonusGhost = DazeExtensions.PrefabFind(null, "common", "BonusGhost");
+            _bonusParticle = DazeExtensions.PrefabFind(null, "common", "BonusParticle");
+            _bonusParticleGhost = DazeExtensions.PrefabFind(null, "common", "BonusParticleGhost");
+            _bonusGhostSupercharge = DazeExtensions.PrefabFind(null, "common", "BonusGhostSuperCharge");
+            _bonusSupercharge = DazeExtensions.PrefabFind(null, "common", "BonusSuperCharge");
+            _bonusDualWield = DazeExtensions.PrefabFind(null, "common", "BonusDualWield Variant");
         }
     }
 
@@ -51,7 +78,7 @@ namespace BorealEditor.Initializers
         {
             base.Awake();
             Debug.Log("Loading custom level");
-            FirstRoom = Instantiate(DazeExtensions.PrefabFind(null, "common", "firstroom"), transform.position, Quaternion.identity, transform);
+            FirstRoom = Instantiate(DazeExtensions.PrefabFind(null, "common", "firstroom"), transform.position, transform.rotation, transform);
             MapLoader.Instance.isCustomLoaded = true;
             MapLoader.Instance.currentCustomId = "com.boreal." + SceneManager.GetActiveScene().name;
             Instantiate(DazeExtensions.PrefabFind(null, "common", "statsmanager"));
@@ -85,7 +112,7 @@ namespace BorealEditor.Initializers
         private void Start()
         {
             Debug.Log("Loading final pit");
-            FinalRoom = Instantiate(DazeExtensions.PrefabFind(null, "common", "FinalRoom 1"), transform.position - new Vector3(0f, 10f, 0f), Quaternion.identity, transform);
+            FinalRoom = Instantiate(DazeExtensions.PrefabFind(null, "common", "FinalRoom 1"), transform.position - new Vector3(0f, 10f, 0f), transform.rotation, transform);
             FinalDoor = FinalRoom.GetComponentInChildren<FinalDoor>();
             CameraController.Instance.GetComponentInChildren<LevelNameFinder>(true).textBeforeName = $"{BorealManager.Instance.LayerName}: {BorealManager.Instance.LevelName}";
             FinalRank.Instance.transform.Find("Challenge/Text").GetComponent<Text>().text = BorealManager.Instance.ChallengeDescription.ToUpper();

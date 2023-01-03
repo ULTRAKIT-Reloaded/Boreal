@@ -30,9 +30,18 @@ namespace BorealEditor.Boilerplate
         }
     }
 
+    // Enums
+
     public enum HitterType
     {
         Hitter,
         HitterWeapon
+    }
+
+    public enum BonusType
+    {
+        Default,
+        Supercharge,
+        DualWield
     }
 }
